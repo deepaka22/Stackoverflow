@@ -48,7 +48,9 @@ router.post("/login", async (req, resp) => {
 
     const token = await generateToken(emailValidataion._id);
     console.log(token, "from router");
-    return resp.status(201).json({ data: result, token: token });
+    return resp
+      .status(201)
+      .json({ data: result, token: token, dataresponse: "sucess" });
   } catch (error) {
     return resp.status(500).json({ message: "internal server error", error });
   }

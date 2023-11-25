@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import { studentsRouter } from "./Routes/student.js";
 import { userRouter } from "./Routes/user.js";
 import { isAuthenticated } from "./Authentication/userAuth.js";

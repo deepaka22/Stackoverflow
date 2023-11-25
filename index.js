@@ -5,6 +5,7 @@ import { isAuthenticated } from "./Authentication/userAuth.js";
 
 import dotenv from "dotenv";
 
+
 const app = express();
 
 dotenv.config();
@@ -16,6 +17,7 @@ app.listen(PORT, () => {
 });
 
 // middle ware..
+app.use(cors());
 app.use(express.json());
 // Router
 app.use("/students", isAuthenticated, studentsRouter);

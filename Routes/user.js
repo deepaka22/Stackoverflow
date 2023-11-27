@@ -78,14 +78,14 @@ router.post("/forgotPassword", async (req, resp) => {
     var transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
-        user: "deepakbakyalakshmi1997@gmail.com",
-        pass: "mgdrzoruqqwrafyj",
+        user: process.env.USERID,
+        pass: process.env.PASSWORD,
       },
     });
 
     var mailOptions = {
-      from: "deepakbakyalakshmi1997@gmail.com",
-      to: "deepakjaguar1996@gmail.com",
+      from: process.env.USERID,
+      to: findingUser.email,
       subject: "Reset to your password",
       text:
         `http://localhost:3000/users/passwordReset/${findingUser._id}/${token}` +
@@ -106,22 +106,27 @@ router.post("/forgotPassword", async (req, resp) => {
 });
 
 router.post("/passwordReset/:id/:token", async (req, resp) => {
-  const { id, token } = req.params;
-  const recievedPassword = req.body;
+  try {
+    const { id, token } = req.params;
+    const recievedPassword = req.body;
 
-  console.log(id, token, recievedPassword);
-  const isValid = jwt.verify(token, process.env.SECRET_KEY);
-  console.log(isValid);
+    console.log(id, token, recievedPassword);
 
-  if (!isValid) {
-    resp.status(201).json({ Message: "invalid token" });
+    const isValid = jwt.verify(token, process.env.SECRET_KEY);
+    console.log(isValid);
+
+    if (!isValid) {
+      resp.status(201).json({ Message: "invalid token" });
+    }
+
+    const salt = await bcrypt.genSalt(10); // salt value will be generated (1-10)
+    const hashedPass = await bcrypt.hash(recievedPassword.password, salt); // hashing the password + salt value
+    const userdata = { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
+    const dbinfo = await ResetPassword(id, userdata); //sharing the info to db (saltv + hashed pass = new pass)
+
+    return resp.status(201).json({ message: "password Changed successfully" });
+  } catch (error) {
+    return resp.json({ message: "internal server Error" }, error);
   }
-
-  const salt = await bcrypt.genSalt(10); // salt value will be generated (1-10)
-  const hashedPass = await bcrypt.hash(recievedPassword.password, salt); // hashing the password + salt value
-  const userdata = await { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
-  const dbinfo = await ResetPassword(id, userdata); //sharing the info to db (saltv + hashed pass = new pass)
-
-  return resp.status(201).json({ message: "password Changed successfully" });
 });
 export const userRouter = router;

@@ -30,3 +30,5 @@ export const ResetPassword = (id, data) => {
     .collection("userData")
     .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: data });
 };
+//  deepakaguar
+// pass : password123

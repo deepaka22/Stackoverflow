@@ -87,9 +87,7 @@ router.post("/forgotPassword", async (req, resp) => {
       from: process.env.USERID,
       to: findingUser.email,
       subject: "Reset to your password",
-      text:
-        `http://localhost:3000/users/passwordReset/${findingUser._id}/${token}` +
-        "Password needs to be Changed in 24 Hours",
+      text: `http://localhost:3000/users/passwordReset/${findingUser._id}/${token}`,
     };
 
     transporter.sendMail(mailOptions, function (error, info) {

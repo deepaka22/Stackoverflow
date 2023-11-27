@@ -88,7 +88,7 @@ router.post("/forgotPassword", async (req, resp) => {
       to: findingUser.email,
       subject: "Reset to your password",
       text:
-        `http://localhost:3000/users/passwordReset/${findingUser._id}/${token}` +
+        `https://sampleauthentication.onrender.com/users/passwordReset/${findingUser._id}/${token}` +
         "Password needs to be Changed in 24 Hours",
     };
 
@@ -110,6 +110,7 @@ router.post("/passwordReset/:id/:token", async (req, resp) => {
   const recievedPassword = req.body;
 
   console.log(id, token, recievedPassword);
+
   const isValid = jwt.verify(token, process.env.SECRET_KEY);
   console.log(isValid);
 
@@ -119,7 +120,7 @@ router.post("/passwordReset/:id/:token", async (req, resp) => {
 
   const salt = await bcrypt.genSalt(10); // salt value will be generated (1-10)
   const hashedPass = await bcrypt.hash(recievedPassword.password, salt); // hashing the password + salt value
-  const userdata = await { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
+  const userdata = { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
   const dbinfo = await ResetPassword(id, userdata); //sharing the info to db (saltv + hashed pass = new pass)
 
   return resp.status(201).json({ message: "password Changed successfully" });

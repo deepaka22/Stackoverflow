@@ -3,7 +3,7 @@ import cors from "cors";
 import { studentsRouter } from "./Routes/student.js";
 import { userRouter } from "./Routes/user.js";
 import { isAuthenticated } from "./Authentication/userAuth.js";
-import bodyParser from "body-parser";
+// import bodyParser from "body-parser";
 import dotenv from "dotenv";
 
 const app = express();
@@ -18,7 +18,7 @@ app.listen(PORT, () => {
 
 // middle ware..
 app.use(cors());
-app.use(bodyParser.json());
+// app.use(bodyParser.json());
 app.use(express.json());
 
 // Router

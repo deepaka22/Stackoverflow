@@ -1,6 +1,8 @@
 import { client } from "../db.js";
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
+import { ObjectId } from "mongodb";
+
 dotenv.config();
 
 export const addUser = (data) => {
@@ -16,4 +18,15 @@ export const findUser = (email) => {
 
 export const generateToken = (id) => {
   return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: "30d" });
+};
+
+export const forgetPassword = (id) => {
+  return jwt.sign({ id }, process.env.SECRET_KEY, { expiresIn: "1d" });
+};
+
+export const ResetPassword = (id, data) => {
+  return client
+    .db("Authentication")
+    .collection("userData")
+    .findOneAndUpdate({ _id: new ObjectId(id) }, { $set: data });
 };

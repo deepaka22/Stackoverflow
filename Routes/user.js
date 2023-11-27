@@ -1,10 +1,17 @@
 import express from "express";
 import bcrypt from "bcrypt";
+import jwt from "jsonwebtoken";
+import dotenv from "dotenv";
+dotenv.config();
 import {
   addUser,
   findUser,
   generateToken,
+  forgetPassword,
+  ResetPassword,
 } from "../dbcontoller/userController.js";
+
+import nodemailer from "nodemailer";
 
 const router = express.Router();
 
@@ -56,4 +63,65 @@ router.post("/login", async (req, resp) => {
   }
 });
 
+router.post("/forgotPassword", async (req, resp) => {
+  try {
+    const result = req.body;
+
+    const findingUser = await findUser(result.email); // since email is unique, we check whether user is aldreay in
+    console.log(findingUser, "yes");
+    if (!findingUser) {
+      resp.status(400).json({ message: "email id does not exists" });
+    }
+
+    const token = await forgetPassword(findingUser._id);
+
+    var transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        user: "deepakbakyalakshmi1997@gmail.com",
+        pass: "mgdrzoruqqwrafyj",
+      },
+    });
+
+    var mailOptions = {
+      from: "deepakbakyalakshmi1997@gmail.com",
+      to: "deepakjaguar1996@gmail.com",
+      subject: "Reset to your password",
+      text:
+        `http://localhost:3000/users/passwordReset/${findingUser._id}/${token}` +
+        "Password needs to be Changed in 24 Hours",
+    };
+
+    transporter.sendMail(mailOptions, function (error, info) {
+      if (error) {
+        console.log(error);
+      } else {
+        console.log("Email sent: " + info.response); // return resp.send({ message: "success" });
+      }
+    });
+    resp.json({ message: "Mail sent" });
+  } catch (error) {
+    resp.json({ message: "invalid response or error resetting password" });
+  }
+});
+
+router.post("/passwordReset/:id/:token", async (req, resp) => {
+  const { id, token } = req.params;
+  const recievedPassword = req.body;
+
+  console.log(id, token, recievedPassword);
+  const isValid = jwt.verify(token, process.env.SECRET_KEY);
+  console.log(isValid);
+
+  if (!isValid) {
+    resp.status(201).json({ Message: "invalid token" });
+  }
+
+  const salt = await bcrypt.genSalt(10); // salt value will be generated (1-10)
+  const hashedPass = await bcrypt.hash(recievedPassword.password, salt); // hashing the password + salt value
+  const userdata = await { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
+  const dbinfo = await ResetPassword(id, userdata); //sharing the info to db (saltv + hashed pass = new pass)
+
+  return resp.status(201).json({ message: "password Changed successfully" });
+});
 export const userRouter = router;

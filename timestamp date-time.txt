@@ -1,1 +1,14 @@
 Sun, 01 Oct 2023 19:13:12 
+
+
+// sample
+1. design a forget passowrd page...
+2. check if the user exists in db...
+3. if user doesnt not found, send error msg as use not found...
+
+
+1. check if the  user is found in db, 
+2. if yes generate a token 
+3. copy the node mail handler from w3 scl, and import and instal npm i nodemailer
+4. mail will be sent. 
+5.

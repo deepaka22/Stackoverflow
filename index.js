@@ -3,9 +3,9 @@ import cors from "cors";
 import { studentsRouter } from "./Routes/student.js";
 import { userRouter } from "./Routes/user.js";
 import { isAuthenticated } from "./Authentication/userAuth.js";
+import nodemailer from "nodemailer";
 
 import dotenv from "dotenv";
-
 
 const app = express();
 
@@ -20,6 +20,7 @@ app.listen(PORT, () => {
 // middle ware..
 app.use(cors());
 app.use(express.json());
+
 // Router
 app.use("/students", isAuthenticated, studentsRouter);
 app.use("/users", userRouter);

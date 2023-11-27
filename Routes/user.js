@@ -88,7 +88,7 @@ router.post("/forgotPassword", async (req, resp) => {
       to: findingUser.email,
       subject: "Reset to your password",
       text:
-        `https://sampleauthentication.onrender.com/users/passwordReset/${findingUser._id}/${token}` +
+        `http://localhost:${process.env.PORT}/users/passwordReset/${findingUser._id}/${token}` +
         "Password needs to be Changed in 24 Hours",
     };
 

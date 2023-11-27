@@ -110,7 +110,14 @@ router.post("/passwordReset/:id/:token", async (req, resp) => {
     const { id, token } = req.params;
     const recievedPassword = req.body;
 
+<<<<<<< HEAD
     console.log(id, token, recievedPassword);
+=======
+  console.log(id, token, recievedPassword);
+
+  const isValid = jwt.verify(token, process.env.SECRET_KEY);
+  console.log(isValid);
+>>>>>>> 3050d917b1f3ee46d09721458104fa70c288f6df
 
     const isValid = jwt.verify(token, process.env.SECRET_KEY);
     console.log(isValid);
@@ -128,5 +135,15 @@ router.post("/passwordReset/:id/:token", async (req, resp) => {
   } catch (error) {
     return resp.json({ message: "internal server Error" }, error);
   }
+<<<<<<< HEAD
+=======
+
+  const salt = await bcrypt.genSalt(10); // salt value will be generated (1-10)
+  const hashedPass = await bcrypt.hash(recievedPassword.password, salt); // hashing the password + salt value
+  const userdata = { password: hashedPass }; // {complete req.body, and in that password has the hashedpass}
+  const dbinfo = await ResetPassword(id, userdata); //sharing the info to db (saltv + hashed pass = new pass)
+
+  return resp.status(201).json({ message: "password Changed successfully" });
+>>>>>>> 3050d917b1f3ee46d09721458104fa70c288f6df
 });
 export const userRouter = router;

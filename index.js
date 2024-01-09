@@ -1,26 +1,15 @@
 import express from "express";
-import cors from "cors";
-import { studentsRouter } from "./Routes/student.js";
-import { userRouter } from "./Routes/user.js";
-import { isAuthenticated } from "./Authentication/userAuth.js";
 import dotenv from "dotenv";
-
-const app = express();
-
+import { userRouter } from "./Routers/Routers.js";
 dotenv.config();
+const app = express();
+const port = process.env.PORT;
 
-const PORT = process.env.PORT;
-
-app.listen(PORT, () => {
-  console.log(`Server started in local hosts ${PORT}`);
+app.listen(port, () => {
+  console.log(`server started successfully in ${port}`);
 });
-
 // middle ware..
 app.use(cors());
 app.use(express.json());
-
-// Router
-app.use("/students", isAuthenticated, studentsRouter);
+// routes...
 app.use("/users", userRouter);
-
-// d-flex flex-row align-items-center justify-content-center justify-content-lg-start
